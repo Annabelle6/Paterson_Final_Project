@@ -40,7 +40,7 @@ setDT(excel_nzw_data , keep.rownames = TRUE)
 Graph <- excel_nzw_data %>% 
   select(rn, "Number of wineries") 
   
-ggplot(Graph, aes(x = rn, y = "Number of wineries")) + geom_smooth()
+ggplot(Graph, aes(x = rn, y = "Number of wineries")) + geom_point()
 
 ```
 
