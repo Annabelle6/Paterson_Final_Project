@@ -16,11 +16,12 @@ library(dplyr)
 library(data.table)
 library(readr)
 
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
    # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   titlePanel("NZ Wine (Hope this is okay, yes I will come to study hall to sort out my data))"),
    
    # Sidebar with a slider input for number of bins 
    sidebarLayout(
@@ -45,7 +46,7 @@ server <- function(input, output) {
    output$distPlot <- renderPlot({
       # generate bins based on input$bins from ui.R
      #reading the xl file
-     readin <- read_excel(../data/"Summary_of_NZ_Wines.xlsx")
+     readin <- read_excel("Summary_of_NZ_Wines.xlsx")
      #swapping axis
      edit_data <- as.data.frame(t(readin))
      #fixing column names 
@@ -61,7 +62,7 @@ server <- function(input, output) {
      Graph <- excel_nzw_data %>% 
        select(rn, "Number of wineries") 
      
-     ggplot(Graph, aes(x = rn, y = "Number of wineries")) + geom_smooth()
+     ggplot(Graph, aes(x = rn, y = "Number of wineries")) + geom_point()
    })
 }
 
