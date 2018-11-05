@@ -1,0 +1,49 @@
+---
+title: "Code"
+author: "Annabelle Paterson"
+date: "11/4/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("pdftools")
+library(pdftools)
+library(tidyverse)
+library(shiny)
+library(readxl)
+library(dplyr)
+install.packages("data.table")
+library(data.table)
+library(readr)
+```
+
+
+```{r}
+#reading the xl file
+readin <- read_excel("Summary_of_NZ_Wines.xlsx")
+
+#swapping axis
+edit_data <- as.data.frame(t(readin))
+
+#fixing column names 
+names(edit_data) <- lapply(edit_data[1, ], as.character)
+
+#removing unneeded row 
+excel_nzw_data <- edit_data[-c(1), ] 
+
+
+setDT(excel_nzw_data , keep.rownames = TRUE)
+
+
+#making trail graph 
+Graph <- excel_nzw_data %>% 
+  select(rn, "Number of wineries") 
+  
+ggplot(Graph, aes(x = rn, y = "Number of wineries")) + geom_smooth()
+
+```
+
+
+
+
