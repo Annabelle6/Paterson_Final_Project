@@ -51,7 +51,8 @@ nz_regions <- nz_regions %>%
 #I want to join the two files to add the wine data to the geojson file 
 
 ---------------------------------------------------
-  
+
+#creating a dataframe to join with the geojson
 #I need to go back to my wineries_region_data because I dont need to 
 #change the axis of the regions 
   
@@ -99,22 +100,22 @@ new_wineries_region$order = new_wineries_region$wineries_by_region
 
 order_new <- new_wineries_region %>% 
   mutate(order = 
-           case_when(order == "Northland" ~ "09", 
-                     order == "Auckland" ~ "01", 
-                     order == "Waikato" ~ "14", 
-                     order == "Waikato/Bay of Plenty" ~ "02", 
-                     order == "Gisborne"  ~ "04", 
-                     order == "Hawke's Bay" ~ "05", 
-                     order == "Wairarapa" ~ "15", 
-                     order == "Nelson" ~ "08", 
-                     order == "Marlborough" ~ "07", 
-                     order == "Canterbury/Waipara" ~ "03", 
-                     order == "Central Otago" ~ "10", 
-                     order == "Waitaki Valley" ~ "11",
-                     order == "Manawatu-Wanganui Region" ~ "06",
-                     order == "Taranaki Region" ~ "12",
-                     order == "Tasman Region" ~ "13",
-                     order == "West Coast Region" ~ "16")) %>% 
+           case_when(order == "Northland" ~ "01", 
+                     order == "Auckland" ~ "02", 
+                     order == "Waikato" ~ "03", 
+                     order == "Waikato/Bay of Plenty" ~ "04", 
+                     order == "Gisborne"  ~ "05", 
+                     order == "Hawke's Bay" ~ "06", 
+                     order == "Wairarapa" ~ "09", 
+                     order == "Nelson" ~ "17", 
+                     order == "Marlborough" ~ "18", 
+                     order == "Canterbury/Waipara" ~ "13", 
+                     order == "Central Otago" ~ "14", 
+                     order == "Waitaki Valley" ~ "15",
+                     order == "Manawatu-Wanganui Region" ~ "08",
+                     order == "Taranaki Region" ~ "07",
+                     order == "Tasman Region" ~ "16",
+                     order == "West Coast Region" ~ "12")) %>% 
   
 #rearranging with the new order col
   arrange(order)
@@ -140,3 +141,62 @@ name_new <- order_new %>%
                      wineries_by_region == "West Coast Region" ~ "West Coast Region"))
 
 ---------------------------------------------------------
+#joing the wine data and the geojson file 
+
+#reading in the geojson
+nz_geo <- geojsonio::geojson_read("nz_regions//nz_region.geojson", what = "sp")
+
+#making the geojson file a tibble
+nz_tibble <- as_data_frame(nz_geo)
+
+#renaming the order col
+colnames(name_new)[colnames(name_new)=="order"] <- "REGC2016"
+colnames(name_new)[colnames(name_new)=="wineries_by_region"] <- "REGC2016_N"
+  
+#joining the data
+merge <- merge(nz_geo, name_new, duplicateGeoms = TRUE)
+
+
+-------------------------------------------------------
+
+#making merge a SpatialPolygonsDataFrame and not a data.frame
+
+# make a list
+merge_list <- split(merge, merge$REGC2016)
+# only want lon-lats in the list, not the names
+#buildings_list <- lapply(buildings_list, function(x) { x["id"] <- NULL; x })
+
+
+
+
+
+
+
+
+
+#  make data.frame into spatial polygon, cf. http://jwhollister.com/iale_open_science/2015/07/05/03-Spatial-Data-In-R/
+
+
+merge_SP <- lapply(merge_list, Polygon)
+
+# add id variable
+p1 <- lapply(seq_along(ps), function(i) Polygons(list(ps[[i]]), 
+                                                 ID = names(buildings_list)[i]  ))
+
+# create SpatialPolygons object
+my_spatial_polys <- SpatialPolygons(p1, proj4string = CRS("+proj=longlat +datum=WGS84") ) 
+
+
+
+
+# create SpatialPolygons Object, convert coords to polygon
+merge_SP <- sapply(merge_list, Polygon)
+
+# add id variable 
+p1 <- Polygons(ps, ID = 1) 
+
+# create SpatialPolygons object
+my_spatial_polys <- SpatialPolygons(list(p1), proj4string = CRS("+proj=longlat +datum=WGS84") ) 
+
+# let's see them
+  
