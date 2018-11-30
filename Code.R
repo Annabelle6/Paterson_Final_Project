@@ -163,11 +163,14 @@ merge <- merge(nz_geo, name_new, duplicateGeoms = TRUE)
 
 # make a list
 merge_list <- split(merge, merge$REGC2016)
-# only want lon-lats in the list, not the names
+
+-----
+#Stuck after about here 
+
 #buildings_list <- lapply(buildings_list, function(x) { x["id"] <- NULL; x })
 
-
-
+#
+--------------
 
 
 
