@@ -201,3 +201,12 @@ merge <- merge(nz_geo, name_new, duplicateGeoms = TRUE)
 
 # create SpatialPolygons object
         #my_spatial_polys <- SpatialPolygons(list(p1), proj4string = CRS("+proj=longlat +datum=WGS84") ) 
+
+
+library(maps)
+data(nzMapEnv)
+
+nz_map <- map('nz')
+
+
+
