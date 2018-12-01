@@ -2,11 +2,9 @@ library(tidyverse)
 library(shiny)
 library(readxl)
 library(dplyr)
-install.packages("data.table")
 library(data.table)
 library(readr)
 library(janitor)
-install.packages("norm")
 library(norm)
 library(leaflet)
 
@@ -82,6 +80,7 @@ new_wineries_region <- rbind(new_wineries_region, taranaki)
 new_wineries_region <- rbind(new_wineries_region, tasman)
 new_wineries_region <- rbind(new_wineries_region, WestCoast)
 
+#remove total and other 
 new_wineries_region <- new_wineries_region[-c(12, 13), ]
   
 #wine data has combined Waikato and Bay of plenty 
@@ -162,12 +161,14 @@ merge <- merge(nz_geo, name_new, duplicateGeoms = TRUE)
 #making merge a SpatialPolygonsDataFrame and not a data.frame
 
 # make a list
-merge_list <- split(merge, merge$REGC2016)
+
+  
+  #merge_list <- split(merge, merge$REGC2016)
 
 -----
 #Stuck after about here 
 
-#buildings_list <- lapply(buildings_list, function(x) { x["id"] <- NULL; x })
+      #buildings_list <- lapply(buildings_list, function(x) { x["id"] <- NULL; x })
 
 #
 --------------
@@ -179,27 +180,24 @@ merge_list <- split(merge, merge$REGC2016)
 
 #  make data.frame into spatial polygon, cf. http://jwhollister.com/iale_open_science/2015/07/05/03-Spatial-Data-In-R/
 
-
-merge_SP <- lapply(merge_list, Polygon)
+       #merge_SP <- lapply(merge_list, Polygon)
 
 # add id variable
-p1 <- lapply(seq_along(ps), function(i) Polygons(list(ps[[i]]), 
+
+        #p1 <- lapply(seq_along(ps), function(i) Polygons(list(ps[[i]]), 
                                                  ID = names(buildings_list)[i]  ))
 
 # create SpatialPolygons object
-my_spatial_polys <- SpatialPolygons(p1, proj4string = CRS("+proj=longlat +datum=WGS84") ) 
+        #my_spatial_polys <- SpatialPolygons(p1, proj4string = CRS("+proj=longlat +datum=WGS84") ) 
 
 
 
 
 # create SpatialPolygons Object, convert coords to polygon
-merge_SP <- sapply(merge_list, Polygon)
+        #merge_SP <- sapply(merge_list, Polygon)
 
 # add id variable 
-p1 <- Polygons(ps, ID = 1) 
+        #p1 <- Polygons(ps, ID = 1) 
 
 # create SpatialPolygons object
-my_spatial_polys <- SpatialPolygons(list(p1), proj4string = CRS("+proj=longlat +datum=WGS84") ) 
-
-# let's see them
-  
+        #my_spatial_polys <- SpatialPolygons(list(p1), proj4string = CRS("+proj=longlat +datum=WGS84") ) 
