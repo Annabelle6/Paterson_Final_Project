@@ -1,9 +1,15 @@
 library(shiny)
 library(plotly)
 library(shinythemes)
+library(tidyverse)
+library(ggrepel)
+library(dplyr)
+library(ggmap)
 
 
 data <- readRDS("Nz_wine_map_data")
+dots <- readRDS("dots_new")
+locations <- readRDS("locations_new")
 
 # Define UI for Education application
 ui <- navbarPage(
@@ -85,7 +91,15 @@ ui <- navbarPage(
            fluidPage(
              plotlyOutput("plot2018")
            )
-  )
+  ), 
+  
+  tabPanel("World", 
+           fluidPage(
+             plotlyOutput("World")
+           
+           )
+)
+
 )
 
 
@@ -257,6 +271,34 @@ server <- function(input, output, session) {
       )
   })
   
+  ######################### World
+  
+  output$World <- renderPlotly({
+    
+    geo <- list(
+      showland = TRUE,
+      landcolor = toRGB("gray95"),
+      countrycolor = toRGB("gray80")
+    )
+  
+    pWorld <- plot_geo(color = I("red")) %>%
+      add_markers(
+        data = dots, x = ~lon, y = ~lat, text = ~dot,
+        size = ~order, hoverinfo = "text", alpha = 0.5) %>%
+      
+      add_segments(
+        data = group_by(locations, Order),
+        x = ~lon.y, xend = ~lon.x,
+        y = ~lat.y, yend = ~lat.x,
+        alpha = 0.3, size = I(1), hoverinfo = "none") %>%
+      
+      layout(
+        title = 'New Zealand Wine Distribution around the world<br>(Hover for country names)',
+        geo = geo, showlegend = FALSE, height=1000)
+    
+    ggplotly(pWorld)
+
+  })
   
 }
 
